@@ -26,8 +26,8 @@ public class MainActivity extends AppCompatActivity {
 
     public static final int REQUEST_CODE_MEMO_ADD = 2000;
     public static final int REQUEST_CODE_DETAIL = 2001;
-    public final String DATABASE_NAME = "Memo.db";
-    public final String TABLE_NAME = "MemoDB";
+    public static final String DATABASE_NAME = "Memo.db";
+    public static final String TABLE_NAME = "MemoDB";
     public int DATABASE_VERSION = 1;
 
     private RecyclerView mRecyclerView;
@@ -50,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), MemoAddActivity.class);
-                intent.putExtra("test", "testing");
                 startActivityForResult(intent, REQUEST_CODE_MEMO_ADD);
             }
         });
@@ -65,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayouManager);
 
         memoItems = new ArrayList<>();
-        mAdapter = new MemoAdapter(memoItems);
+        mAdapter = new MemoAdapter(memoItems, this, getApplicationContext());
         mRecyclerView.setAdapter(mAdapter);
 
 
@@ -83,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if ( requestCode == REQUEST_CODE_MEMO_ADD) {
+        if (requestCode == REQUEST_CODE_MEMO_ADD) {
             if (resultCode == RESULT_OK) {
                 Toast.makeText(getApplicationContext(), "RESULT_OK", Toast.LENGTH_SHORT).show();
                 String title = data.getExtras().getString("title", null);
@@ -93,9 +92,11 @@ public class MainActivity extends AppCompatActivity {
                 Date mdate = new Date(miliTime);
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH시 mm분", Locale.KOREA);
                 String date = dateFormat.format(mdate);
-                MemoItem newMemo = new MemoItem(title, date, memo);
+
+                MemoItem newMemo = new MemoItem(memoItems.size() + 1, title, date, memo);
                 memoItems.add(newMemo);
                 mAdapter.notifyDataSetChanged();
+
             }
         }
 

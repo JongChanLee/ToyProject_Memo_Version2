@@ -24,9 +24,9 @@ public class MemoDataBase {
 
         int count = cursor.getCount();
         String[] memo = new String[count];
-        for ( int i = 0; i < count; i++){
+        for (int i = 0; i < count; i++) {
             cursor.moveToNext();
-            memoItems.add(new MemoItem(cursor.getString(1), cursor.getString(2), cursor.getString(3)));
+            memoItems.add(new MemoItem(i + 1, cursor.getString(1), cursor.getString(2), cursor.getString(3)));
         }
         return memoItems;
     }

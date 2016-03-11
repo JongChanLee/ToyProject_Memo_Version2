@@ -4,12 +4,14 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.tistory.wproject.memo.View.MainActivity;
+
 /**
  * Created by Lee on 2016-03-07.
  */
 public class CreateAndLoadDBHelper extends SQLiteOpenHelper {
 
-    public final String TABLE_NAME = "MemoDB";
+
 
     public CreateAndLoadDBHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
@@ -17,7 +19,7 @@ public class CreateAndLoadDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_SQL = "create table " + TABLE_NAME + "("
+        String CREATE_SQL = "create table " + MainActivity.TABLE_NAME + "("
                 + " _id integer PRIMARY KEY autoincrement, "
                 + " title text, "
                 + " date text, "
