@@ -11,8 +11,6 @@ import com.tistory.wproject.memo.View.MainActivity;
  */
 public class CreateAndLoadDBHelper extends SQLiteOpenHelper {
 
-
-
     public CreateAndLoadDBHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
     }
@@ -20,7 +18,6 @@ public class CreateAndLoadDBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_SQL = "create table " + MainActivity.TABLE_NAME + "("
-                + " _id integer PRIMARY KEY autoincrement, "
                 + " title text, "
                 + " date text, "
                 + " memo text)";

@@ -1,15 +1,15 @@
 package com.tistory.wproject.memo;
 
-import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.TextView;
 
 import com.tistory.wproject.memo.View.ItemView;
+import com.tistory.wproject.memo.View.MainActivity;
 
 import java.util.ArrayList;
 
@@ -19,46 +19,29 @@ import java.util.ArrayList;
 public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
 
     private ArrayList<MemoItem> memoItems;
-    private Activity mactivity;
+    private MainActivity mactivity;
     private Context mContext;
 
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
-
+    public static class ViewHolder extends RecyclerView.ViewHolder {
 
         public ItemView itemView;
-        public OnItemCilckListener itemCilckListener;
 
-
-        public ViewHolder(View view, OnItemCilckListener listener, Context context) {
+        public ViewHolder(View view, Context context, MainActivity activity) {
             super(view);
-            itemView = new ItemView(context);
-            itemCilckListener = listener;
+            itemView = new ItemView(context, activity);
             itemView.textView = (TextView) view.findViewById(R.id.list_item_title);
-            itemView.setClickable(true);
-            itemView.setOnClickListener(this);
-            itemView.setOnLongClickListener(this);
-
+            itemView.textView.setClickable(true);
+            itemView.textView.setOnClickListener(itemView);
+            itemView.textView.setOnLongClickListener(itemView);
+            ViewParent parentView = itemView.textView.getParent();
+            View parent = (View) parentView;
+            parent.setOnClickListener(itemView);
+            parent.setOnLongClickListener(itemView);
         }
 
-        @Override
-        public void onClick(View v) {
-            itemCilckListener.onClick(v);
-        }
-
-        @Override
-        public boolean onLongClick(View v) {
-            itemCilckListener.onLongClick(v);
-            return true;
-        }
-
-        public static interface OnItemCilckListener {
-            public void onClick(View view);
-
-            public boolean onLongClick(View view);
-        }
     }
 
-    public MemoAdapter(ArrayList<MemoItem> memoItems, Activity activity, Context context) {
+    public MemoAdapter(ArrayList<MemoItem> memoItems, MainActivity activity, Context context) {
         this.memoItems = memoItems;
         this.mactivity = activity;
         this.mContext = context;
@@ -68,21 +51,7 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
     public MemoAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, final int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_memo, parent, false);
 
-
-        final ViewHolder vh = new ViewHolder(v, new MemoAdapter.ViewHolder.OnItemCilckListener() {
-            @Override
-            public void onClick(View view) {
-
-                TextView textView = (TextView) view;
-                Log.d("memo", " 성공!");
-            }
-
-            @Override
-            public boolean onLongClick(View view) {
-                Log.d("click", "Long Click : " + view.getId());
-                return true;
-            }
-        }, mContext);
+        final ViewHolder vh = new ViewHolder(v, mContext, mactivity);
         return vh;
     }
 

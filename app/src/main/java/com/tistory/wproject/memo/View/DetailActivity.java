@@ -23,12 +23,15 @@ public class DetailActivity extends AppCompatActivity {
         title = (TextView) findViewById(R.id.detail_title);
         date = (TextView) findViewById(R.id.detail_date);
         detail = (TextView) findViewById(R.id.detail_detail);
-
-        title.setText(memoItem.getTitle());
+        if ( memoItem.getTitle() == null ) {
+            title.setText("제목 없음");
+        } else {
+            title.setText(memoItem.getTitle());
+        }
         date.setText(memoItem.getDate());
         detail.setText(memoItem.getMemo());
 
-    }
 
+    }
 
 }

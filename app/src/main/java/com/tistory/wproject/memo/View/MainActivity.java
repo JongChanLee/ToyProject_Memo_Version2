@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
+
 public class MainActivity extends AppCompatActivity {
 
     public static final int REQUEST_CODE_MEMO_ADD = 2000;
@@ -34,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayouManager;
     private ArrayList<MemoItem> memoItems;
+    private MemoDataBase db;
+    private SQLiteOpenHelper dbhelper;
 
 
     @Override
@@ -41,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //this.deleteDatabase(DATABASE_NAME);
         getMemoArray();
 
         initRecyclerView();
@@ -51,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), MemoAddActivity.class);
                 startActivityForResult(intent, REQUEST_CODE_MEMO_ADD);
+
             }
         });
     }
@@ -63,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
         mLayouManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayouManager);
 
-        memoItems = new ArrayList<>();
         mAdapter = new MemoAdapter(memoItems, this, getApplicationContext());
         mRecyclerView.setAdapter(mAdapter);
 
@@ -72,8 +77,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getMemoArray() {
-        SQLiteOpenHelper dbhelper = new CreateAndLoadDBHelper(getApplicationContext(), DATABASE_NAME, null, DATABASE_VERSION);
-        MemoDataBase db = new MemoDataBase(dbhelper.getReadableDatabase());
+        dbhelper = new CreateAndLoadDBHelper(getApplicationContext(), DATABASE_NAME, null, DATABASE_VERSION);
+        db = new MemoDataBase(dbhelper.getReadableDatabase());
 
         memoItems = db.getMemoArray(TABLE_NAME);
     }
@@ -93,13 +98,41 @@ public class MainActivity extends AppCompatActivity {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH시 mm분", Locale.KOREA);
                 String date = dateFormat.format(mdate);
 
-                MemoItem newMemo = new MemoItem(memoItems.size() + 1, title, date, memo);
-                memoItems.add(newMemo);
+                MemoItem newMemo = new MemoItem(memoItems.size(), title, date, memo);
+                memoItems.add(0, newMemo);
                 mAdapter.notifyDataSetChanged();
 
             }
         }
+    }
 
+    public void removeMemo(int ID) {
 
+        final int removePosition = memoItems.size() - ID - 1;
+        final MemoItem deleteItem = memoItems.remove(removePosition);
+        for (int i = removePosition - 1; i >= 0; i--) {
+            int id = memoItems.get(i).getID();
+            memoItems.get(i).setID(id - 1);
+        }
+        mAdapter.notifyDataSetChanged();
+        String snackbarText;
+        if (deleteItem.getTitle() == null)
+            snackbarText = deleteItem.getDate();
+        else
+            snackbarText = deleteItem.getTitle();
+        Snackbar.make(mRecyclerView,  snackbarText + "\n 메모가 삭제되었습니다.", Snackbar.LENGTH_LONG).setAction("되돌리기", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                memoItems.add(removePosition, deleteItem);
+                mAdapter.notifyDataSetChanged();
+            }
+        }).show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        db.deleteAll(TABLE_NAME);
+        db.save(memoItems);
     }
 }

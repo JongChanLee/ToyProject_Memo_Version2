@@ -3,6 +3,7 @@ package com.tistory.wproject.memo.View;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.Fade;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -64,9 +65,12 @@ public class MemoAddActivity extends AppCompatActivity implements View.OnClickLi
                 setResult(RESULT_CANCELED);
                 Toast.makeText(getApplicationContext(), "취소버튼을 클릭하셨습니다.", Toast.LENGTH_SHORT).show();
                 finish();
+
                 break;
             }
 
         }
     }
+
+
 }

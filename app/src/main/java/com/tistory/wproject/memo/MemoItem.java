@@ -40,4 +40,8 @@ public class MemoItem implements Serializable {
     public String getTitle() {
         return Title;
     }
+
+    public void setID(int id){
+        ID = id;
+    }
 }
